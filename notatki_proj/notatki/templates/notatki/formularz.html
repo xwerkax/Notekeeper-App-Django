@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Dodaj notatkę</title>
+</head>
+<body>
+    <h1>Dodaj notatkę</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label for="id_tytul">Tytuł:</label><br>
+        {{ form.tytul }}<br><br>
+
+        <label for="id_przedmiot">Przedmiot:</label><br>
+        {{ form.przedmiot }}<br><br>
+
+        <label for="id_data">Data:</label><br>
+        {{ form.data }}<br><br>
+
+        <label for="id_tresc">Treść:</label><br>
+        {{ form.tresc }}<br><br>
+
+        <button type="submit">Zapisz</button>
+    </form>
+</body>
+</html>

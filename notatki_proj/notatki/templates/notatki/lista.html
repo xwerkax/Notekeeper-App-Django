@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Moje Notatki</title>
+</head>
+<body>
+   {% if user.is_authenticated %}
+        <p>Witaj, {{ user.username }}! <a href="{% url 'logout' %}">Wyloguj</a></p>
+    {% else %}
+        <form action="{% url 'login' %}" method="get" style="display:inline;">
+            <button type="submit">Zaloguj</button>
+        </form>
+    {% endif %}
+
+    <h1>Lista Notatek</h1>
+
+    <!-- Przycisk do dodawania nowej notatki -->
+    <a href="{% url 'dodaj_notatke' %}">
+        <button>Dodaj nową notatkę</button>
+    </a>
+
+    {% for notatka in notatki %}
+        <div>
+            <h2>{{ notatka.tytul }}</h2>
+            <p>{{ notatka.tresc }}</p>
+            <small>{{ notatka.data }}</small>  <!-- Poprawione z data_utworzenia na data -->
+        </div>
+    {% empty %}
+        <p> </p>
+    {% endfor %}
+
+</body>
+</html>
