@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ notatka.tytul }} - NoteKeeper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('/static/images/forms.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .header h1 {
+            color: #669999;
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 500;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb a {
+            color: #333;
+            text-decoration: none;
+            margin-right: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #669999;
+        }
+
+        .breadcrumb span {
+            color: #666;
+        }
+
+        /* Główny kontener */
+        .view-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ccdddd;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Header notatki */
+        .note-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(102, 153, 153, 0.3);
+        }
+
+        .note-title {
+            color: #333;
+            font-size: 2.5em;
+            font-weight: 500;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .note-subject {
+            background: #669999;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .note-date {
+            color: #666;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        /* Meta informacje */
+        .note-meta {
+            background: rgba(102, 153, 153, 0.1);
+            border-left: 4px solid #669999;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .note-meta h3 {
+            color: #669999;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        .meta-icon {
+            font-size: 1.2em;
+            color: #669999;
+        }
+
+        /* Treść notatki */
+        .note-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 4px solid #669999;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            line-height: 1.8;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .note-content h4 {
+            color: #669999;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .note-content p {
+            margin-bottom: 15px;
+        }
+
+        .note-content:empty::before {
+            content: "Brak treści w notatce.";
+            color: #888;
+            font-style: italic;
+        }
+
+        /* Przyciski akcji */
+        .actions-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 140px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: #669999;
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 153, 153, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 153, 153, 0.4);
+            background: #5a8585;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        /* Stats box */
+        .stats-box {
+            background: rgba(102, 153, 153, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item {
+            color: #669999;
+        }
+
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            display: block;
+            color: #333;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .view-container {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            .actions-container {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .note-title {
+                font-size: 2em;
+            }
+
+            .meta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animacje */
+        .note-content {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .header, .breadcrumb, .actions-container {
+                display: none;
+            }
+
+            .view-container {
+                box-shadow: none;
+                background: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <h1>NoteKeeper App</h1>
+        <!-- USER INFO (możesz dodać później) -->
+    </div>
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+        <a href="{% url 'lista_notatek' %}">🏠 Strona główna</a>
+        <span>/</span>
+        <a href="{% url 'moje_notatki' %}">📋 Moje notatki</a>
+        <span>/ 👁️ {{ notatka.tytul|truncatechars:30 }}</span>
+    </div>
+
+    <!-- GŁÓWNY KONTENER -->
+    <div class="view-container">
+        <!-- HEADER NOTATKI -->
+        <div class="note-header">
+            <h1 class="note-title">{{ notatka.tytul }}</h1>
+
+            {% if notatka.przedmiot %}
+            <div class="note-subject">{{ notatka.przedmiot }}</div>
+            {% endif %}
+
+            <div class="note-date">
+                📅 {{ notatka.data|date:"d.m.Y" }}
+            </div>
+        </div>
+
+        <!-- STATYSTYKI -->
+        <div class="stats-box">
+            <div class="stat-item">
+                <span class="stat-number">{{ notatka.tresc|wordcount }}</span>
+                <div class="stat-label">słów</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ notatka.tresc|length }}</span>
+                <div class="stat-label">znaków</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">#{{ notatka.id }}</span>
+                <div class="stat-label">ID notatki</div>
+            </div>
+        </div>
+
+        <!-- META INFORMACJE -->
+        <div class="note-meta">
+            <h3>📋 Szczegóły notatki</h3>
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <span class="meta-icon">📅</span>
+                    <span>Utworzona: {{ notatka.data_utworzenia|date:"d.m.Y H:i"|default:"Brak danych" }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-icon">🔄</span>
+                    <span>Ostatnio edytowana: {{ notatka.data_modyfikacji|date:"d.m.Y H:i"|default:"Nigdy" }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-icon">👤</span>
+                    <span>Autor: {{ notatka.autor.username }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-icon">📚</span>
+                    <span>Przedmiot: {{ notatka.przedmiot|default:"Brak" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TREŚĆ NOTATKI -->
+        <div class="note-content">
+            <h4>✍️ Treść notatki:</h4>
+            {{ notatka.tresc|linebreaks }}
+        </div>
+
+        <!-- PRZYCISKI AKCJI -->
+        <div class="actions-container">
+            <a href="{% url 'edytuj_notatke' notatka.id %}" class="btn btn-primary">
+                ✏️ Edytuj notatkę
+            </a>
+
+            <a href="{% url 'moje_notatki' %}" class="btn btn-secondary">
+                ↩️ Powrót do listy
+            </a>
+
+            <a href="{% url 'usun_notatke' notatka.id %}" class="btn btn-danger"
+               onclick="return confirm('Czy na pewno chcesz usunąć notatkę: {{ notatka.tytul }}?\n\nTej operacji nie można cofnąć.')">
+                🗑️ Usuń notatkę
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Smooth scroll dla długich notatek
+        window.addEventListener('load', function() {
+            if (window.location.hash) {
+                document.querySelector(window.location.hash)?.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+E = Edytuj
+            if (e.ctrlKey && e.key === 'e') {
+                e.preventDefault();
+                document.querySelector('.btn-primary').click();
+            }
+
+            // Escape = Powrót
+            if (e.key === 'Escape') {
+                window.location.href = "{% url 'moje_notatki' %}";
+            }
+        });
+
+        // Print funkcja (Ctrl+P)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'p') {
+                window.print();
+            }
+        });
+    </script>
+</body>
+</html>

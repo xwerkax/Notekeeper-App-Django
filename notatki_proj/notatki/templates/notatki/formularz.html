@@ -3,26 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <title>Dodaj notatkę</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('/static/images/forms.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            font-family: Arial, sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #669999;
+            box-shadow: 0 0 15px rgba(102, 153, 153, 0.2);
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input[type="date"] {
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #669999;
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 153, 153, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 153, 153, 0.4);
+            background: #5a8585;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .form-icon {
+            position: relative;
+        }
+
+        .form-icon::before {
+            content: attr(data-icon);
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #669999;
+            pointer-events: none;
+        }
+
+        .form-icon input,
+        .form-icon select,
+        .form-icon textarea {
+            padding-left: 50px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: white;
+            transform: translateX(-5px);
+        }
+
+        .form-tips {
+            background: rgba(102, 153, 153, 0.1);
+            border-left: 4px solid #669999;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .form-tips h3 {
+            color: #669999;
+            margin-bottom: 10px;
+        }
+
+        .form-tips ul {
+            color: #555;
+            margin-left: 20px;
+        }
+
+        .form-tips li {
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Dodaj notatkę</h1>
+    <a href="{% url 'lista_notatek' %}" class="back-link">
+        ← Powrót do ekranu głównego
+    </a>
 
-    <form method="post">
-        {% csrf_token %}
+    <div class="container">
+        <div class="header">
+            <h1>📝 Dodaj notatkę</h1>
+            <p>Stwórz nową notatkę i dodaj ją do swojej kolekcji</p>
+        </div>
 
-        <label for="id_tytul">Tytuł:</label><br>
-        {{ form.tytul }}<br><br>
+        <div class="form-tips">
+            <h3>💡 Wskazówki:</h3>
+            <ul>
+                <li>Wybierz opisowy tytuł dla łatwego wyszukiwania</li>
+                <li>Dodaj przedmiot aby grupować notatki tematycznie</li>
+                <li>Data pomoże Ci śledzić kiedy powstała notatka</li>
+            </ul>
+        </div>
 
-        <label for="id_przedmiot">Przedmiot:</label><br>
-        {{ form.przedmiot }}<br><br>
+        <form method="post">
+            {% csrf_token %}
 
-        <label for="id_data">Data:</label><br>
-        {{ form.data }}<br><br>
+            <div class="form-group">
+    <label>📌 Tytuł notatki:</label>
+    <div class="form-icon" data-icon="📌">
+        <input type="text" name="tytul" placeholder="Wprowadź tytuł notatki..." required>
+    </div>
+</div>
 
-        <label for="id_tresc">Treść:</label><br>
-        {{ form.tresc }}<br><br>
+<div class="form-group">
+    <label>📚 Przedmiot:</label>
+    <div class="form-icon" data-icon="📚">
+        <input type="text" name="przedmiot" placeholder="Przedmiot">
+    </div>
+</div>
 
-        <button type="submit">Zapisz</button>
-    </form>
+<div class="form-group">
+    <label>📅 Data:</label>
+    <div class="form-icon" data-icon="📅">
+        <input type="date" name="data">
+    </div>
+</div>
+
+<div class="form-group">
+    <label>✍️ Treść notatki:</label>
+    <div class="form-icon" data-icon="✍️">
+        <textarea name="tresc" placeholder="Treść notatki..." required></textarea>
+    </div>
+</div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">
+                    💾 Zapisz notatkę
+                </button>
+                <a href="{% url 'lista_notatek' %}" class="btn btn-secondary">
+                    ❌ Anuluj
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Auto-resize textarea
+        const textarea = document.querySelector('textarea');
+        if (textarea) {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+        }
+
+        // Set current date as default if field is empty
+        window.addEventListener('load', function() {
+            const dateInput = document.querySelector('input[type="date"]');
+            if (dateInput && !dateInput.value) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.value = today;
+            }
+        });
+
+        // Form validation feedback
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            const submitBtn = document.querySelector('.btn-primary');
+            submitBtn.innerHTML = '⏳ Zapisywanie...';
+            submitBtn.style.opacity = '0.7';
+        });
+    </script>
 </body>
 </html>

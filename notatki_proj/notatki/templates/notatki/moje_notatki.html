@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Moje Notatki - NoteKeeper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('/static/images/forms.jpeg');
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .header h1 {
+            color: #3f5e5e;
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 500;
+        }
+
+
+        .breadcrumb {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb a {
+            color: #333;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .breadcrumb span {
+            color: #333;
+        }
+
+        /* Sekcja z notatkami */
+        .notes-container {
+            background: #ccdddd;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Header sekcji */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(153, 204, 153, 0.3);
+        }
+
+        .section-title {
+            color: #333;
+            font-size: 1.5em;
+            font-weight: 500;
+        }
+
+        .notes-count {
+            background: #669999;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+
+        /* Filtry i sortowanie */
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-item select, .filter-item input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+        }
+
+        /* Grid notatek */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Karta pojedynczej notatki */
+        .note-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid #669999;
+            position: relative;
+        }
+
+        .note-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .note-title {
+            color: #333;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .note-subject {
+            background: #ccdddd;
+            color: #4d7373;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .note-content {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .note-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .note-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Przyciski akcji */
+        .note-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-edit {
+            background: #669999;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #4d7373;
+            transform: translateY(-1px);
+        }
+
+        .btn-delete {
+            background: #669999;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #4d7373;
+            transform: translateY(-1px);
+        }
+
+        .btn-view {
+            background: #669999;
+            color: white;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn-view:hover {
+            background: #4d7373;
+        }
+
+        /* Przycisk dodaj notatkę */
+        .add-note-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #669999;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(153, 204, 153, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .add-note-fab:hover {
+            background: #85b885;
+            transform: scale(1.1);
+        }
+
+        /* Stan pusty */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .empty-state p {
+            margin-bottom: 20px;
+        }
+
+        .empty-state .btn {
+            background: #669999;
+            color: white;
+            padding: 12px 24px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .notes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>NoteKeeper App 🐈🪴</h1>
+        <div class="user-info">
+        </div>
+    </div>
+
+
+    <div class="breadcrumb">
+        <a href="{% url 'lista_notatek' %}">🏠 Strona główna</a>
+        <span>/ 📚 Moje notatki</span>
+    </div>
+
+
+    <div class="notes-container">
+        <div class="section-header">
+            <h2 class="section-title">📚 Moje notatki</h2>
+            <div class="notes-count">
+                {{ notatki.count }} notes
+            </div>
+        </div>
+
+
+        <div class="filters">
+            <div class="filter-item">
+                <input type="text" placeholder="🔍 Szukaj w notatkach..." id="search">
+            </div>
+            <div class="filter-item">
+                <select id="sort">
+                    <option value="date">Sortuj: Najnowsze</option>
+                    <option value="title">Sortuj: Alfabetycznie</option>
+                    <option value="subject">Sortuj: Przedmiot</option>
+                </select>
+            </div>
+            <div class="filter-item">
+    <select id="subject-filter">
+        <option value="">Wszystkie przedmioty</option>
+        {% for przedmiot in przedmioty %}
+        <option value="{{ przedmiot }}">{{ przedmiot|title }}</option>
+        {% endfor %}
+    </select>
+</div>
+        </div>
+
+        <div class="notes-grid">
+            {% for notatka in notatki %}
+            <div class="note-card">
+                <div class="note-header">
+                    <div>
+                        <h3 class="note-title">{{ notatka.tytul }}</h3>
+                        {% if notatka.przedmiot %}
+                        <span class="note-subject">{{ notatka.przedmiot }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="note-content">
+                    {{ notatka.tresc|truncatewords:15 }}
+                </div>
+
+                <div class="note-meta">
+                    <div class="note-date">
+                        📅 {{ notatka.data|date:"d.m.Y" }}
+                    </div>
+                    <div class="note-words">
+                        {{ notatka.tresc|wordcount }} words
+                    </div>
+                </div>
+
+                <div class="note-actions">
+
+                    <a href="{% url 'edytuj_notatke' notatka.id %}" class="btn btn-edit">
+                        ✏️ Edytuj
+                    </a>
+                    <a href="{% url 'usun_notatke' notatka.id %}" class="btn btn-delete"
+       onclick="return confirm('Czy na pewno chcesz usunąć notatkę: {{ notatka.tytul }}?')">
+        🗑️ Usuń
+    </a>
+       <a href="{% url 'podglad_notatki' notatka.id %}" class="btn btn-view">
+                        👁️️ Podgląd
+                    </a>
+
+
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <h3>📝 Nie masz jeszcze żadnych notatek</h3>
+                <p>Zacznij tworzyć swoje notatki już dziś!</p>
+                <a href="{% url 'dodaj_notatke' %}" class="btn">
+                    ➕ Dodaj pierwszą notatkę
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <button class="add-note-fab" onclick="location.href='{% url 'dodaj_notatke' %}'">
+        ➕
+    </button>
+
+    <script>
+        // Wyszukiwanie w notatkach
+        document.getElementById('search').addEventListener('input', function(e) {
+            filterNotes();
+        });
+
+        // Filtrowanie po przedmiocie
+        document.getElementById('subject-filter').addEventListener('change', function(e) {
+            filterNotes();
+        });
+
+        // Sortowanie
+        document.getElementById('sort').addEventListener('change', function(e) {
+            sortNotes();
+        });
+
+        // Funkcja filtrowania
+        function filterNotes() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const selectedSubject = document.getElementById('subject-filter').value.toLowerCase();
+            const noteCards = document.querySelectorAll('.note-card');
+
+            noteCards.forEach(card => {
+                const title = card.querySelector('.note-title').textContent.toLowerCase();
+                const content = card.querySelector('.note-content').textContent.toLowerCase();
+                const subjectElement = card.querySelector('.note-subject');
+                const subject = subjectElement ? subjectElement.textContent.toLowerCase() : '';
+
+                // Sprawdź wyszukiwanie
+                const matchesSearch = !searchTerm || title.includes(searchTerm) || content.includes(searchTerm);
+
+                // Sprawdź filtr przedmiotu
+                const matchesSubject = !selectedSubject || subject.includes(selectedSubject);
+
+                if (matchesSearch && matchesSubject) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Funkcja sortowania
+function sortNotes() {
+    const sortValue = document.getElementById('sort').value;
+    const notesGrid = document.querySelector('.notes-grid');
+    const noteCards = Array.from(document.querySelectorAll('.note-card'));
+
+    noteCards.sort((a, b) => {
+        if (sortValue === 'title') {
+            const titleA = a.querySelector('.note-title').textContent;
+            const titleB = b.querySelector('.note-title').textContent;
+            return titleA.localeCompare(titleB);
+        } else if (sortValue === 'subject') {
+            const subjectA = a.querySelector('.note-subject')?.textContent || '';
+            const subjectB = b.querySelector('.note-subject')?.textContent || '';
+            return subjectA.localeCompare(subjectB);
+        } else if (sortValue === 'date') {
+            // Sortowanie po dacie - najnowsze pierwsze
+            const dateA = a.querySelector('.note-date').textContent.replace('📅 ', '');
+            const dateB = b.querySelector('.note-date').textContent.replace('📅 ', '');
+
+
+            const [dayA, monthA, yearA] = dateA.split('.');
+            const [dayB, monthB, yearB] = dateB.split('.');
+
+            const parsedDateA = new Date(yearA, monthA - 1, dayA);
+            const parsedDateB = new Date(yearB, monthB - 1, dayB);
+
+            return parsedDateB - parsedDateA;
+        }
+        return 0;
+    });
+
+    // Przemieść karty w nowej kolejności
+    noteCards.forEach(card => notesGrid.appendChild(card));
+}
+    </script>
+</body>
+</html>

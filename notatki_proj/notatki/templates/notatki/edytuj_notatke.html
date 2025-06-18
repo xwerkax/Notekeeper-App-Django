@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Edytuj notatkę - NoteKeeper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('/static/images/forms.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Header - identyczny jak w innych widokach */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .header h1 {
+            color: #ccdddd;
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 500;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb a {
+            color: #333;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .breadcrumb span {
+            color: #333;
+        }
+
+        /* Główny kontener formularza */
+        .edit-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ccdddd;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Header formularza */
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(153, 204, 153, 0.3);
+        }
+
+        .form-header h1 {
+            color: #333;
+            font-size: 2em;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        /* Info o notatce */
+        .note-info {
+            background: #b8c9c9;
+            border-left: 4px solid #669999;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .note-info h3 {
+            color: #669999;
+            margin-bottom: 10px;
+        }
+
+        .note-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        /* Formularz */
+        .edit-form {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .required {
+            color: #ff6b6b;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            font-family: Arial, sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #99cc99;
+            box-shadow: 0 0 15px rgba(153, 204, 153, 0.2);
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        /* Ikony w polach */
+        .form-icon {
+            position: relative;
+        }
+
+        .form-icon::before {
+            content: attr(data-icon);
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #99cc99;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .form-icon input,
+        .form-icon select,
+        .form-icon textarea {
+            padding-left: 50px;
+        }
+
+        /* Podgląd zmian */
+        .preview-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #669999;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .preview-title {
+            color: #333;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .preview-toggle {
+            background: #669999;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .preview-content {
+            color: #666;
+            line-height: 1.6;
+            display: none;
+        }
+
+        /* Przyciski akcji */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 140px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: #669999;
+            color: white;
+            box-shadow: 0 4px 15px rgba(153, 204, 153, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(153, 204, 153, 0.4);
+            background: #336666;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        /* Status zmian */
+        .changes-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ffeaa7;
+            color: #d63031;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            display: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .changes-status.show {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .edit-container {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .note-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER - identyczny jak w innych widokach -->
+    <div class="header">
+        <h1>NoteKeeper App 🐈🪴</h1>
+        <!-- USER INFO -->
+    </div>
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+        <a href="{% url 'lista_notatek' %}">🏠 Strona główna</a>
+        <span>/</span>
+        <a href="{% url 'moje_notatki' %}">📋 Moje notatki</a>
+        <span>/ ✏️ Edytuj notatkę</span>
+    </div>
+
+    <!-- Status zmian -->
+    <div class="changes-status" id="changesStatus">
+        💾 Masz niezapisane zmiany
+    </div>
+
+    <!-- GŁÓWNY KONTENER -->
+    <div class="edit-container">
+        <!-- HEADER FORMULARZA -->
+        <div class="form-header">
+            <h1>✏️ Edytuj notatkę</h1>
+            <p>Wprowadź zmiany w swojej notatce</p>
+        </div>
+
+        <!-- INFO O NOTATCE -->
+        <div class="note-info">
+            <h3>📋 Informacje o notatce</h3>
+            <div class="note-info-grid">
+                <div class="info-item">
+                    <span>📅</span>
+                    <span>Utworzona: {{ notatka.data_utworzenia|date:"d.m.Y H:i" }}</span>
+                </div>
+                <div class="info-item">
+                    <span>🔄</span>
+                    <span>Ostatnia edycja: {{ notatka.data_modyfikacji|date:"d.m.Y H:i"|default:"Nigdy" }}</span>
+                </div>
+                <div class="info-item">
+                    <span>📝</span>
+                    <span>Słowa: <span id="wordCount">{{ notatka.tresc|wordcount }}</span></span>
+                </div>
+                <div class="info-item">
+                    <span>🏷️</span>
+                    <span>ID: #{{ notatka.id }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORMULARZ EDYCJI -->
+        <form method="post" class="edit-form" id="editForm">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>📌 Tytuł notatki <span class="required">*</span></label>
+                <div class="form-icon" data-icon="📌">
+                    <input type="text" name="tytul" value="{{ notatka.tytul }}" required maxlength="200">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>📚 Przedmiot</label>
+                <div class="form-icon" data-icon="📚">
+                    <select name="przedmiot" id="subject-select">
+                        <option value="">Wybierz przedmiot</option>
+
+                        <!-- DYNAMICZNE PRZEDMIOTY Z BAZY DANYCH -->
+                        {% for przedmiot in przedmioty %}
+                        <option value="{{ przedmiot }}"
+                                {% if notatka.przedmiot == przedmiot %}selected{% endif %}>
+                            {{ przedmiot|title }}
+                        </option>
+                        {% endfor %}
+
+                        <!-- OPCJA DODANIA NOWEGO -->
+                        <option value="nowy">+ Dodaj nowy przedmiot</option>
+                    </select>
+                </div>
+
+                <!-- UKRYTE POLE DO NOWEGO PRZEDMIOTU -->
+                <div class="form-icon" data-icon="➕" id="new-subject-group" style="display: none; margin-top: 10px;">
+                    <input type="text" id="new-subject-input" name="nowy_przedmiot"
+                           placeholder="Wpisz nazwę nowego przedmiotu...">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>📅 Data</label>
+                <div class="form-icon" data-icon="📅">
+                    <input type="date" name="data" value="{{ notatka.data|date:'Y-m-d' }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>✍️ Treść notatki <span class="required">*</span></label>
+                <div class="form-icon" data-icon="✍️">
+                    <textarea name="tresc" required placeholder="Wprowadź treść swojej notatki...">{{ notatka.tresc }}</textarea>
+                </div>
+            </div>
+
+            <!-- PODGLĄD ZMIAN -->
+            <div class="preview-section">
+                <div class="preview-header">
+                    <span class="preview-title">👁️ Podgląd notatki</span>
+                    <button type="button" class="preview-toggle" onclick="togglePreview()">
+                        Pokaż podgląd
+                    </button>
+                </div>
+                <div class="preview-content" id="previewContent">
+                    <!-- Dynamiczny podgląd w JavaScript -->
+                </div>
+            </div>
+
+            <!-- PRZYCISKI AKCJI -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    💾 Zapisz zmiany
+                </button>
+
+                <a href="{% url 'moje_notatki' %}" class="btn btn-secondary">
+                    ❌ Anuluj
+                </a>
+
+                <a href="{% url 'usun_notatke' notatka.id %}" class="btn btn-danger"
+                    onclick="return confirm('Czy na pewno chcesz usunąć tę notatkę? Tej operacji nie można cofnąć.')">
+                    🗑️ Usuń notatkę
+                </a>
+</div>
+        </form>
+    </div>
+
+    <script>
+        // Obsługa nowego przedmiotu
+        document.getElementById('subject-select').addEventListener('change', function() {
+            const newSubjectGroup = document.getElementById('new-subject-group');
+            const newSubjectInput = document.getElementById('new-subject-input');
+
+            if (this.value === 'nowy') {
+                newSubjectGroup.style.display = 'block';
+                newSubjectInput.required = true;
+                newSubjectInput.focus();
+            } else {
+                newSubjectGroup.style.display = 'none';
+                newSubjectInput.required = false;
+                newSubjectInput.value = '';
+            }
+        });
+
+        // Śledzenie zmian w formularzu
+        let originalData = {};
+        let hasChanges = false;
+
+        // Zapisz oryginalne dane przy załadowaniu
+        window.addEventListener('load', function() {
+            const form = document.getElementById('editForm');
+            const formData = new FormData(form);
+            for (let [key, value] of formData.entries()) {
+                originalData[key] = value;
+            }
+        });
+
+        // Monitoruj zmiany
+        document.getElementById('editForm').addEventListener('input', function() {
+            checkForChanges();
+            updateWordCount();
+            updatePreview();
+        });
+
+        // Dodaj nasłuchiwanie na nowe pole przedmiotu
+        document.getElementById('new-subject-input').addEventListener('input', function() {
+            checkForChanges();
+            updatePreview();
+        });
+
+        function checkForChanges() {
+            const form = document.getElementById('editForm');
+            const formData = new FormData(form);
+            hasChanges = false;
+
+            for (let [key, value] of formData.entries()) {
+                if (originalData[key] !== value) {
+                    hasChanges = true;
+                    break;
+                }
+            }
+
+            const status = document.getElementById('changesStatus');
+            if (hasChanges) {
+                status.classList.add('show');
+            } else {
+                status.classList.remove('show');
+            }
+        }
+
+        // Licznik słów
+        function updateWordCount() {
+            const textarea = document.querySelector('textarea[name="tresc"]');
+            const wordCount = textarea.value.trim().split(/\s+/).filter(word => word.length > 0).length;
+            document.getElementById('wordCount').textContent = wordCount;
+        }
+
+        // Podgląd notatki
+        function togglePreview() {
+            const content = document.getElementById('previewContent');
+            const button = document.querySelector('.preview-toggle');
+
+            if (content.style.display === 'none' || content.style.display === '') {
+                updatePreview();
+                content.style.display = 'block';
+                button.textContent = 'Ukryj podgląd';
+            } else {
+                content.style.display = 'none';
+                button.textContent = 'Pokaż podgląd';
+            }
+        }
+
+        function updatePreview() {
+            const title = document.querySelector('input[name="tytul"]').value;
+            const subjectSelect = document.querySelector('select[name="przedmiot"]').value;
+            const newSubject = document.querySelector('input[name="nowy_przedmiot"]').value;
+            const subject = subjectSelect === 'nowy' ? newSubject : subjectSelect;
+            const content = document.querySelector('textarea[name="tresc"]').value;
+            const date = document.querySelector('input[name="data"]').value;
+
+            const previewContent = document.getElementById('previewContent');
+            previewContent.innerHTML = `
+                <h3 style="margin-bottom: 10px; color: #333;">${title || 'Bez tytułu'}</h3>
+                ${subject ? `<span style="background: #ccdddd; color: #669999; padding: 3px 8px; border-radius: 12px; font-size: 0.8em;">${subject}</span>` : ''}
+                <p style="margin: 15px 0; line-height: 1.6; color: #666;">${content || 'Brak treści'}</p>
+                <small style="color: #888;">📅 ${date || 'Brak daty'}</small>
+            `;
+        }
+
+        // Ostrzeżenie przed opuszczeniem strony z niezapisanymi zmianami
+        window.addEventListener('beforeunload', function(e) {
+            if (hasChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // Auto-resize textarea
+        const textarea = document.querySelector('textarea');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        // FIX: Wyłącz ostrzeżenie przy zapisywaniu
+        document.querySelector('form').addEventListener('submit', function() {
+            hasChanges = false;
+        });
+    </script>
+</body>
+</html>
