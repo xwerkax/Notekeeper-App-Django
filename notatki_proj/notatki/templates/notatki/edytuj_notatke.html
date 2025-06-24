@@ -10,6 +10,7 @@
             box-sizing: border-box;
         }
 
+        /* Stylowanie body z tłem */
         body {
             font-family: Arial, sans-serif;
             background-image: url('/static/images/forms.jpeg');
@@ -21,7 +22,7 @@
             padding: 20px;
         }
 
-        /* Header - identyczny jak w innych widokach */
+        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -42,7 +43,7 @@
             font-weight: 500;
         }
 
-        /* Breadcrumb */
+        /* Breadcrumb - ścieżka nawigacyjna */
         .breadcrumb {
             background: rgba(255, 255, 255, 0.6);
             padding: 10px 15px;
@@ -50,6 +51,7 @@
             margin-bottom: 20px;
         }
 
+        /* Linki w breadcrumb */
         .breadcrumb a {
             color: #333;
             text-decoration: none;
@@ -90,7 +92,7 @@
             font-size: 1.1em;
         }
 
-        /* Info o notatce */
+        /* Sekcja informacji o notatce */
         .note-info {
             background: #b8c9c9;
             border-left: 4px solid #669999;
@@ -99,6 +101,7 @@
             border-radius: 0 8px 8px 0;
         }
 
+        /* Nagłówek */
         .note-info h3 {
             color: #669999;
             margin-bottom: 10px;
@@ -110,6 +113,7 @@
             gap: 15px;
         }
 
+        /* Pojedynczy element informacji */
         .info-item {
             display: flex;
             align-items: center;
@@ -123,10 +127,12 @@
             margin-bottom: 30px;
         }
 
+        /* Grupa pól formularza */
         .form-group {
             margin-bottom: 25px;
         }
 
+        /* Etykiety */
         .form-group label {
             display: block;
             margin-bottom: 8px;
@@ -135,10 +141,12 @@
             font-size: 16px;
         }
 
+        /* Oznaczenie pól wymaganych */
         .required {
             color: #ff6b6b;
         }
 
+        /* Stylowanie pól formularza */
         .form-group input,
         .form-group select,
         .form-group textarea {
@@ -167,7 +175,7 @@
             resize: vertical;
         }
 
-        /* Ikony w polach */
+        /* Kontener dla ikon w polach */
         .form-icon {
             position: relative;
         }
@@ -213,6 +221,7 @@
             font-weight: 600;
         }
 
+        /* Przycisk toggle podglądu */
         .preview-toggle {
             background: #669999;
             color: white;
@@ -223,6 +232,7 @@
             font-size: 0.9em;
         }
 
+        /* Treść podglądu - domyślnie ukryta */
         .preview-content {
             color: #666;
             line-height: 1.6;
@@ -237,6 +247,7 @@
             flex-wrap: wrap;
         }
 
+        /* Bazowe stylowanie przycisków */
         .btn {
             padding: 15px 30px;
             border: none;
@@ -328,13 +339,11 @@
     </style>
 </head>
 <body>
-    <!-- HEADER - identyczny jak w innych widokach -->
     <div class="header">
         <h1>NoteKeeper App 🐈🪴</h1>
-        <!-- USER INFO -->
     </div>
 
-    <!-- BREADCRUMB -->
+    <!-- Breadcrumb - ścieżka nawigacyjna -->
     <div class="breadcrumb">
         <a href="{% url 'lista_notatek' %}">🏠 Strona główna</a>
         <span>/</span>
@@ -347,15 +356,14 @@
         💾 Masz niezapisane zmiany
     </div>
 
-    <!-- GŁÓWNY KONTENER -->
+    <!-- Główny kontener -->
     <div class="edit-container">
-        <!-- HEADER FORMULARZA -->
         <div class="form-header">
             <h1>✏️ Edytuj notatkę</h1>
             <p>Wprowadź zmiany w swojej notatce</p>
         </div>
 
-        <!-- INFO O NOTATCE -->
+        <!-- Informacje o notatce -->
         <div class="note-info">
             <h3>📋 Informacje o notatce</h3>
             <div class="note-info-grid">
@@ -378,7 +386,7 @@
             </div>
         </div>
 
-        <!-- FORMULARZ EDYCJI -->
+        <!-- Edycja notatki -->
         <form method="post" class="edit-form" id="editForm">
             {% csrf_token %}
 
@@ -395,7 +403,6 @@
                     <select name="przedmiot" id="subject-select">
                         <option value="">Wybierz przedmiot</option>
 
-                        <!-- DYNAMICZNE PRZEDMIOTY Z BAZY DANYCH -->
                         {% for przedmiot in przedmioty %}
                         <option value="{{ przedmiot }}"
                                 {% if notatka.przedmiot == przedmiot %}selected{% endif %}>
@@ -403,12 +410,10 @@
                         </option>
                         {% endfor %}
 
-                        <!-- OPCJA DODANIA NOWEGO -->
                         <option value="nowy">+ Dodaj nowy przedmiot</option>
                     </select>
                 </div>
 
-                <!-- UKRYTE POLE DO NOWEGO PRZEDMIOTU -->
                 <div class="form-icon" data-icon="➕" id="new-subject-group" style="display: none; margin-top: 10px;">
                     <input type="text" id="new-subject-input" name="nowy_przedmiot"
                            placeholder="Wpisz nazwę nowego przedmiotu...">
@@ -429,7 +434,7 @@
                 </div>
             </div>
 
-            <!-- PODGLĄD ZMIAN -->
+            <!-- Podgląd zmian -->
             <div class="preview-section">
                 <div class="preview-header">
                     <span class="preview-title">👁️ Podgląd notatki</span>
@@ -438,11 +443,10 @@
                     </button>
                 </div>
                 <div class="preview-content" id="previewContent">
-                    <!-- Dynamiczny podgląd w JavaScript -->
                 </div>
             </div>
 
-            <!-- PRZYCISKI AKCJI -->
+            <!-- Przyciski akcji -->
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">
                     💾 Zapisz zmiany
@@ -481,7 +485,7 @@
         let originalData = {};
         let hasChanges = false;
 
-        // Zapisz oryginalne dane przy załadowaniu
+        // Zapis oryginalnych danych przy załadowaniu
         window.addEventListener('load', function() {
             const form = document.getElementById('editForm');
             const formData = new FormData(form);
@@ -490,14 +494,14 @@
             }
         });
 
-        // Monitoruj zmiany
+        // Monitorowanie zmian w formularzu
         document.getElementById('editForm').addEventListener('input', function() {
             checkForChanges();
             updateWordCount();
             updatePreview();
         });
 
-        // Dodaj nasłuchiwanie na nowe pole przedmiotu
+
         document.getElementById('new-subject-input').addEventListener('input', function() {
             checkForChanges();
             updatePreview();
@@ -570,7 +574,6 @@
             }
         });
 
-        // Auto-resize textarea
         const textarea = document.querySelector('textarea');
         textarea.addEventListener('input', function() {
             this.style.height = 'auto';

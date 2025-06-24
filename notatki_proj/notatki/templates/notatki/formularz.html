@@ -10,6 +10,7 @@
             box-sizing: border-box;
         }
 
+        /* stylowanie body z tłem obrazkowym */
         body {
             font-family: Arial, sans-serif;
             background-image: url('/static/images/forms.jpeg');
@@ -21,6 +22,7 @@
             padding: 20px;
         }
 
+        /* Główny kontener formularza */
         .container {
             max-width: 600px;
             margin: 0 auto;
@@ -32,11 +34,13 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
+        /* Nagłówek formularza */
         .header {
             text-align: center;
             margin-bottom: 30px;
         }
 
+        /* Stylowanie głównego tytułu */
         .header h1 {
             color: #333;
             font-size: 2.5em;
@@ -44,15 +48,18 @@
             margin-bottom: 10px;
         }
 
+        /* Stylowanie podtytułu */
         .header p {
             color: #666;
             font-size: 1.1em;
         }
 
+        /* Grupa pól formularza */
         .form-group {
             margin-bottom: 25px;
         }
 
+        /* Stylowanie etykiet pól */
         .form-group label {
             display: block;
             margin-bottom: 8px;
@@ -61,6 +68,7 @@
             font-size: 16px;
         }
 
+        /* Stylowanie wszystkich pól input, select i textarea */
         .form-group input,
         .form-group select,
         .form-group textarea {
@@ -74,6 +82,7 @@
             font-family: Arial, sans-serif;
         }
 
+        /* Efekt focus */
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
@@ -93,12 +102,14 @@
             cursor: pointer;
         }
 
+        /* Kontener dla przycisków */
         .button-group {
             display: flex;
             gap: 15px;
             margin-top: 30px;
         }
 
+        /* Stylowanie przycisków */
         .btn {
             flex: 1;
             padding: 15px 30px;
@@ -113,6 +124,7 @@
             display: inline-block;
         }
 
+        /* Przycisk główny (submit) */
         .btn-primary {
             background: #669999;
             color: white;
@@ -125,6 +137,7 @@
             background: #5a8585;
         }
 
+        /* Przycisk drugorzędny (anuluj) */
         .btn-secondary {
             background: #f8f9fa;
             color: #6c757d;
@@ -136,6 +149,7 @@
             transform: translateY(-2px);
         }
 
+        /* Kontener dla ikon w polach formularza */
         .form-icon {
             position: relative;
         }
@@ -157,6 +171,7 @@
             padding-left: 50px;
         }
 
+        /* Link powrotu */
         .back-link {
             display: inline-block;
             margin-bottom: 20px;
@@ -171,6 +186,7 @@
             transform: translateX(-5px);
         }
 
+        /* Sekcja z wskazówkami */
         .form-tips {
             background: rgba(102, 153, 153, 0.1);
             border-left: 4px solid #669999;
@@ -179,16 +195,19 @@
             border-radius: 0 8px 8px 0;
         }
 
+        /* Nagłówek */
         .form-tips h3 {
             color: #669999;
             margin-bottom: 10px;
         }
 
+        /* Lista */
         .form-tips ul {
             color: #555;
             margin-left: 20px;
         }
 
+        /* Elementy listy */
         .form-tips li {
             margin-bottom: 5px;
         }
@@ -210,10 +229,13 @@
     </style>
 </head>
 <body>
+
+    <!-- Link powrotu do listy notatek -->
     <a href="{% url 'lista_notatek' %}" class="back-link">
         ← Powrót do ekranu głównego
     </a>
 
+    <!-- Główny kontener formularza -->
     <div class="container">
         <div class="header">
             <h1>📝 Dodaj notatkę</h1>
@@ -229,6 +251,7 @@
             </ul>
         </div>
 
+        <!-- Formularz dodawania notatki -->
         <form method="post">
             {% csrf_token %}
 
@@ -259,7 +282,7 @@
         <textarea name="tresc" placeholder="Treść notatki..." required></textarea>
     </div>
 </div>
-
+            <!-- Grupa przycisków -->
             <div class="button-group">
                 <button type="submit" class="btn btn-primary">
                     💾 Zapisz notatkę
@@ -272,7 +295,8 @@
     </div>
 
     <script>
-        // Auto-resize textarea
+
+        // Automatyczne dopasowywanie wysokości textarea do zawartości
         const textarea = document.querySelector('textarea');
         if (textarea) {
             textarea.addEventListener('input', function() {
@@ -281,7 +305,7 @@
             });
         }
 
-        // Set current date as default if field is empty
+        // Ustawienie dzisiejszej daty jako domyślnej jeśli pole jest puste
         window.addEventListener('load', function() {
             const dateInput = document.querySelector('input[type="date"]');
             if (dateInput && !dateInput.value) {
@@ -290,7 +314,7 @@
             }
         });
 
-        // Form validation feedback
+        // Wizualna informacja zwrotna podczas wysyłania formularza
         const form = document.querySelector('form');
         form.addEventListener('submit', function(e) {
             const submitBtn = document.querySelector('.btn-primary');

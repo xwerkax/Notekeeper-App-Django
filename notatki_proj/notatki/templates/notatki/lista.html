@@ -3,6 +3,8 @@
 <head>
     <title>Moje Notatki</title>
     <style>
+
+        /* Reset i stylowanie body */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -10,6 +12,7 @@
             background-color: #669999;
         }
 
+        /* Header aplikacji */
         .header {
             display: flex;
             justify-content: space-between;
@@ -23,7 +26,7 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* Gif container */
+        /* Kontener dla gif */
         .gif-container {
             position: relative;
             width: 100%;
@@ -40,24 +43,6 @@
             object-fit: cover;
         }
 
-        .gif-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, rgba(0,0,0,0.3), rgba(0,0,0,0.1));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .gif-text {
-            color: white;
-            text-align: center;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-        }
-
         .gif-text h2 {
             font-size: 2.5em;
             margin: 0;
@@ -69,7 +54,7 @@
             margin: 10px 0;
         }
 
-        /* Notes section */
+        /* Sekcja notatek */
         .notes-section {
             background: #ccdddd;
             padding: 20px;
@@ -78,6 +63,7 @@
             margin-top: 30px;
         }
 
+        /* Przyciski notatek */
         .notes-buttons {
             display: flex;
             gap: 15px;
@@ -115,6 +101,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
+        /* Karta notatki */
         .note-card {
             background: #f9f9f9;
             padding: 15px;
@@ -146,6 +133,7 @@
             font-size: 0.9em;
         }
 
+        /* Przycisk logowania */
         .login-btn {
             background: #99cc99;
             color: white;
@@ -178,6 +166,7 @@
             gap: 12px;
         }
 
+        /* Awatar użytkownika */
         .avatar {
             width: 40px;
             height: 40px;
@@ -208,6 +197,7 @@
             text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
         }
 
+        /* Link wylogowania */
         .logout-link {
             color: #333;
             text-decoration: none;
@@ -225,7 +215,9 @@
 <body>
     <div class="header">
         <h1>NoteKeeper App 🐈🪴</h1>
+        <!-- Sprawdzenie logowania -->
         {% if user.is_authenticated %}
+        <!-- Info zalogowanego użytkownika -->
             <div class="user-info">
                 <div class="user-details">
                     <span class="username">{{ user.username }}</span>
@@ -236,13 +228,14 @@
                 </div>
             </div>
         {% else %}
+        <!-- Przycisk logowania -->
             <form action="{% url 'login' %}" method="get" style="display:inline;">
                 <button type="submit" class="login-btn">Zaloguj</button>
             </form>
         {% endif %}
     </div>
 
-    <!-- Gif Background -->
+    <!-- Kontener z gif -->
     <div class="gif-container">
         <img src="/static/images/study.gif" alt="Study Animation" class="background-gif">
     </div>
@@ -271,49 +264,5 @@
         {% endfor %}
     </div>
 
-    <script>
-        let slideIndex = 0;
-        const slides = document.querySelectorAll('.slide');
-        const dots = document.querySelectorAll('.dot');
-
-        function showSlide(index) {
-            slides.forEach(slide => slide.classList.remove('active'));
-            dots.forEach(dot => dot.classList.remove('active'));
-
-            slides[index].classList.add('active');
-            dots[index].classList.add('active');
-        }
-
-        function changeSlide(direction) {
-            slideIndex += direction;
-            if (slideIndex >= slides.length) slideIndex = 0;
-            if (slideIndex < 0) slideIndex = slides.length - 1;
-            showSlide(slideIndex);
-        }
-
-        function currentSlide(index) {
-            slideIndex = index - 1;
-            showSlide(slideIndex);
-        }
-
-        function autoSlide() {
-            slideIndex++;
-            if (slideIndex >= slides.length) slideIndex = 0;
-            showSlide(slideIndex);
-        }
-
-        setInterval(autoSlide, 5000);
-
-        const slideshow = document.querySelector('.slideshow-container');
-        let autoPlay = setInterval(autoSlide, 5000);
-
-        slideshow.addEventListener('mouseenter', () => {
-            clearInterval(autoPlay);
-        });
-
-        slideshow.addEventListener('mouseleave', () => {
-            autoPlay = setInterval(autoSlide, 5000);
-        });
-    </script>
 </body>
 </html>

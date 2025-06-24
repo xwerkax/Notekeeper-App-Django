@@ -10,6 +10,7 @@
             box-sizing: border-box;
         }
 
+        /* Stylowanie body z tłem */
         body {
             font-family: Arial, sans-serif;
             background-image: url('/static/images/forms.jpeg');
@@ -42,7 +43,7 @@
             font-weight: 500;
         }
 
-        /* Breadcrumb */
+        /* Ścieżka nawigacyjna */
         .breadcrumb {
             background: rgba(255, 255, 255, 0.1);
             padding: 10px 15px;
@@ -50,6 +51,7 @@
             margin-bottom: 20px;
         }
 
+        /* Linki breadcrumb */
         .breadcrumb a {
             color: #333;
             text-decoration: none;
@@ -91,6 +93,7 @@
             line-height: 1.2;
         }
 
+        /* Badge przedmiotu */
         .note-subject {
             background: #669999;
             color: white;
@@ -108,7 +111,7 @@
             margin-top: 10px;
         }
 
-        /* Meta informacje */
+        /* Sekcja meta informacji */
         .note-meta {
             background: rgba(102, 153, 153, 0.1);
             border-left: 4px solid #669999;
@@ -165,6 +168,7 @@
             margin-bottom: 15px;
         }
 
+        /* Placeholder dla pustej treści */
         .note-content:empty::before {
             content: "Brak treści w notatce.";
             color: #888;
@@ -179,6 +183,7 @@
             flex-wrap: wrap;
         }
 
+        /* Bazowe stylowanie przycisków */
         .btn {
             padding: 15px 30px;
             border: none;
@@ -230,7 +235,7 @@
             transform: translateY(-2px);
         }
 
-        /* Stats box */
+        /* Sekcja statystyk */
         .stats-box {
             background: rgba(102, 153, 153, 0.1);
             border-radius: 10px;
@@ -309,13 +314,11 @@
     </style>
 </head>
 <body>
-    <!-- HEADER -->
     <div class="header">
         <h1>NoteKeeper App</h1>
-        <!-- USER INFO (możesz dodać później) -->
     </div>
 
-    <!-- BREADCRUMB -->
+    <!-- Ścieżka nawigacyjna -->
     <div class="breadcrumb">
         <a href="{% url 'lista_notatek' %}">🏠 Strona główna</a>
         <span>/</span>
@@ -323,9 +326,9 @@
         <span>/ 👁️ {{ notatka.tytul|truncatechars:30 }}</span>
     </div>
 
-    <!-- GŁÓWNY KONTENER -->
+    <!-- Główny kontener -->
     <div class="view-container">
-        <!-- HEADER NOTATKI -->
+
         <div class="note-header">
             <h1 class="note-title">{{ notatka.tytul }}</h1>
 
@@ -338,7 +341,7 @@
             </div>
         </div>
 
-        <!-- STATYSTYKI -->
+        <!-- Sekcja statystyk -->
         <div class="stats-box">
             <div class="stat-item">
                 <span class="stat-number">{{ notatka.tresc|wordcount }}</span>
@@ -354,7 +357,7 @@
             </div>
         </div>
 
-        <!-- META INFORMACJE -->
+        <!-- Meta informacje -->
         <div class="note-meta">
             <h3>📋 Szczegóły notatki</h3>
             <div class="meta-grid">
@@ -377,13 +380,13 @@
             </div>
         </div>
 
-        <!-- TREŚĆ NOTATKI -->
+        <!-- Treść notatki -->
         <div class="note-content">
             <h4>✍️ Treść notatki:</h4>
             {{ notatka.tresc|linebreaks }}
         </div>
 
-        <!-- PRZYCISKI AKCJI -->
+        <!-- Przyciski akcji -->
         <div class="actions-container">
             <a href="{% url 'edytuj_notatke' notatka.id %}" class="btn btn-primary">
                 ✏️ Edytuj notatkę
@@ -401,7 +404,7 @@
     </div>
 
     <script>
-        // Smooth scroll dla długich notatek
+        // Płynne przewijanie do sekcji
         window.addEventListener('load', function() {
             if (window.location.hash) {
                 document.querySelector(window.location.hash)?.scrollIntoView({
@@ -410,7 +413,7 @@
             }
         });
 
-        // Keyboard shortcuts
+        // Skróty klawiszowe
         document.addEventListener('keydown', function(e) {
             // Ctrl+E = Edytuj
             if (e.ctrlKey && e.key === 'e') {

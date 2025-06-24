@@ -1,7 +1,4 @@
 from django.db import models
-from django.utils import timezone
-
-from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
@@ -21,4 +18,4 @@ class Notatka(models.Model):
     class Meta:
         verbose_name = "Notatka"
         verbose_name_plural = "Notatki"
-        ordering = ['-data']  # Sortowanie od najnowszych
+        ordering = ['-data']

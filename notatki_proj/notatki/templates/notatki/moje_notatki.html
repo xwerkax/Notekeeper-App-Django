@@ -10,6 +10,7 @@
             box-sizing: border-box;
         }
 
+        /* Stylowanie body */
         body {
             font-family: Arial, sans-serif;
             background-image: url('/static/images/forms.jpeg');
@@ -17,7 +18,7 @@
             padding: 20px;
         }
 
-
+        /* Header aplikacji */
         .header {
             display: flex;
             justify-content: space-between;
@@ -38,7 +39,7 @@
             font-weight: 500;
         }
 
-
+        /* Ścieżka nawigacyjna */
         .breadcrumb {
             background: rgba(255, 255, 255, 0.6);
             padding: 10px 15px;
@@ -103,7 +104,6 @@
             background: white;
         }
 
-        /* Grid notatek */
         .notes-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -294,13 +294,13 @@
         </div>
     </div>
 
-
+    <!-- Ścieżka nawigacyjna -->
     <div class="breadcrumb">
         <a href="{% url 'lista_notatek' %}">🏠 Strona główna</a>
         <span>/ 📚 Moje notatki</span>
     </div>
 
-
+    <!-- Kontener notatek -->
     <div class="notes-container">
         <div class="section-header">
             <h2 class="section-title">📚 Moje notatki</h2>
@@ -309,7 +309,7 @@
             </div>
         </div>
 
-
+        <!-- Filtry i sortowanie -->
         <div class="filters">
             <div class="filter-item">
                 <input type="text" placeholder="🔍 Szukaj w notatkach..." id="search">
@@ -356,6 +356,7 @@
                     </div>
                 </div>
 
+                <!-- Przyciski akcji -->
                 <div class="note-actions">
 
                     <a href="{% url 'edytuj_notatke' notatka.id %}" class="btn btn-edit">
@@ -373,6 +374,7 @@
                 </div>
             </div>
             {% empty %}
+            <!-- Stan pustej listy -->
             <div class="empty-state">
                 <h3>📝 Nie masz jeszcze żadnych notatek</h3>
                 <p>Zacznij tworzyć swoje notatki już dziś!</p>
@@ -384,6 +386,7 @@
         </div>
     </div>
 
+     <!-- Przycisk floating dodaj -->
     <button class="add-note-fab" onclick="location.href='{% url 'dodaj_notatke' %}'">
         ➕
     </button>
@@ -416,10 +419,8 @@
                 const subjectElement = card.querySelector('.note-subject');
                 const subject = subjectElement ? subjectElement.textContent.toLowerCase() : '';
 
-                // Sprawdź wyszukiwanie
                 const matchesSearch = !searchTerm || title.includes(searchTerm) || content.includes(searchTerm);
 
-                // Sprawdź filtr przedmiotu
                 const matchesSubject = !selectedSubject || subject.includes(selectedSubject);
 
                 if (matchesSearch && matchesSubject) {
