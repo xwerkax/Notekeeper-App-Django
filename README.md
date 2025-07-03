@@ -39,7 +39,7 @@
 
 - bashpython -m venv venv
 - source venv/bin/activate  # Linux/Mac
-# lub
+#### lub
 - venv\Scripts\activate  # Windows
 
 3. Zainstaluj zależności:
